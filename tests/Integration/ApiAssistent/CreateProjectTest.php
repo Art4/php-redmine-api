@@ -50,4 +50,65 @@ class CreateProjectTest extends TestCase
             $response['data']
         );
     }
+
+    public function testCreateProjectWithTrackerIds()
+    {
+        $res = ApiAssistent::fromClient($this->client)
+            ->createProject('some name', 'the_identifier')
+            ->withTrackerIds(1, 2, 3)
+            ->executeStatement()
+        ;
+
+        $response = json_decode($res, true);
+
+        $this->assertEquals('POST', $response['method']);
+        $this->assertEquals('/projects.xml', $response['path']);
+        $this->assertXmlStringEqualsXmlString(
+            <<< XML
+            <?xml version="1.0"?>
+                        <project>
+                <name>some name</name>
+                <identifier>the_identifier</identifier>
+                <tracker_ids type="array">
+                    <tracker>1</tracker>
+                    <tracker>2</tracker>
+                    <tracker>3</tracker>
+                </tracker_ids>
+            </project>
+            XML,
+            $response['data']
+        );
+    }
+
+    public function testCreateProjectWithTrackerIdsMultiple()
+    {
+        $res = ApiAssistent::fromClient($this->client)
+            ->createProject('some name', 'the_identifier')
+            ->withTrackerIds(1)
+            ->withTrackerIds(2)
+            ->withTrackerIds(4, 5)
+            ->executeStatement()
+        ;
+
+        $response = json_decode($res, true);
+
+        $this->assertEquals('POST', $response['method']);
+        $this->assertEquals('/projects.xml', $response['path']);
+        $this->assertXmlStringEqualsXmlString(
+            <<< XML
+            <?xml version="1.0"?>
+                        <project>
+                <name>some name</name>
+                <identifier>the_identifier</identifier>
+                <tracker_ids type="array">
+                    <tracker>1</tracker>
+                    <tracker>2</tracker>
+                    <tracker>4</tracker>
+                    <tracker>5</tracker>
+                </tracker_ids>
+            </project>
+            XML,
+            $response['data']
+        );
+    }
 }

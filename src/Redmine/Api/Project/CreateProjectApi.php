@@ -60,6 +60,19 @@ final class CreateProjectApi
         return $clone;
     }
 
+    public function withTrackerIds(int ...$ids): self
+    {
+        $clone = clone($this);
+
+        if (! array_key_exists('tracker_ids', $clone->data)) {
+            $clone->data['tracker_ids'] = [];
+        }
+
+        $clone->data['tracker_ids'] = array_merge($clone->data['tracker_ids'], $ids);
+
+        return $clone;
+    }
+
     public function executeStatement(): mixed
     {
         /** @var Project */
