@@ -60,7 +60,7 @@ final class RedmineInstance
         $this->redmineUrl = 'http://redmine-' . $versionId . ':3000';
         $this->apiKey = sha1($versionId . (string) time());
 
-        $this->runHeathChecks($version);
+        $this->runHealthChecks($version);
 
         $this->createDatabaseBackup();
         $this->createFilesBackup();
@@ -89,7 +89,7 @@ final class RedmineInstance
         return $this->apiKey;
     }
 
-    private function runHeathChecks(RedmineVersion $version): void
+    private function runHealthChecks(RedmineVersion $version): void
     {
         $ch = curl_init($this->redmineUrl);
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
@@ -101,7 +101,7 @@ final class RedmineInstance
 
         if ($data === false || $statusCode !== 200) {
             throw new InvalidArgumentException(sprintf(
-                'Could not connect to Redmine server at %s, please make sure that Redmine %s has running a docker service in /docker-composer.yml and is correctly configured in /tests/Behat/behat.yml.',
+                'Could not connect to Redmine server at %s, please make sure that Redmine %s has a docker service in /docker-composer.yml and is correctly configured in /tests/Behat/behat.yml.',
                 $this->redmineUrl,
                 $version->asString(),
             ));
